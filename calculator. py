@@ -1,1 +1,140 @@
-h
+from tkinter import *
+import math
+import re
+history_list=[]
+def preprocess(expression):
+    expression = expression.lower()
+    pattern = r'(sin|cos|tan)(\d+(\.\d+)?)'
+    replacement = r'\1(\2)'
+    processed_expr = re.sub(pattern, replacement, expression)
+    return processed_expr
+
+def click(event):
+    global screen
+    text = event.widget.cget("text")
+    print(text)
+    
+    if text == "=":
+        try:
+            expression = scvalue.get()
+            expression = preprocess(expression)
+            allowed_funcs = {
+                "sin": lambda x: math.sin(math.radians(x)),
+                "cos": lambda x: math.cos(math.radians(x)),
+                "tan": lambda x: math.tan(math.radians(x)),
+                "tan": lambda x: "undefined" if x % 180 == 90 else math.tan(math.radians(x)),
+                "pi": math.pi,
+                "e": math.e,
+                "sqrt": math.sqrt
+            }
+            result = eval(expression, {"__builtins__": None}, allowed_funcs)
+            history_list.append(expression + "=" + str(result))
+            scvalue.set(result)
+        except Exception as e:
+            scvalue.set("Error")
+        screen.update()
+    elif text=="AC":
+        scvalue.set("")
+        screen.update()
+    elif text=="History":
+        show_history()
+    else:
+        scvalue.set(scvalue.get()+text)
+        screen.update()
+
+def show_history():
+    history_window = Toplevel(root)
+    history_window.title("Calculation History")
+    history_window.geometry("300x400")
+
+    history_text = Text(history_window, font="lucida 12", wrap=WORD)
+    history_text.pack(fill=BOTH, expand=True)
+    history_text.insert(END, "\n".join(history_list))
+    history_text.config(state=DISABLED)
+root=Tk()
+root.geometry("461x675")
+root.maxsize(461,675)
+root.minsize(461,675)
+root.title("SCIENTIFIC CALCULATOR BY SHAZIA")
+root.iconbitmap("calculator.ico")
+scvalue=StringVar()
+scvalue.set("")
+
+screen=Entry(root,width=11,text=scvalue,bd=10,relief="sunken",font="lucida 44 bold",bg="black",fg="white")
+screen.grid(row=0,column=0,columnspan=3,padx=3,pady=3)
+
+b1=Button(root,text="7",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b1.grid(row=1,column=0,ipadx=3,ipady=10,padx=3,pady=3)
+b1.bind("<Button-1>",click)
+b2=Button(root,text="8",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b2.grid(row=1,column=1,ipadx=3,ipady=10,padx=3,pady=3)
+b2.bind("<Button-1>",click)
+b3=Button(root,text="9",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b3.grid(row=1,column=2,ipadx=3,ipady=10,padx=3,pady=3)
+b3.bind("<Button-1>",click)
+
+
+b1=Button(root,text="4",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b1.grid(row=2,column=0,ipadx=3,ipady=10,padx=3,pady=3)
+b1.bind("<Button-1>",click)
+b2=Button(root,text="5",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b2.grid(row=2,column=1,ipadx=3,ipady=10,padx=3,pady=3)
+b2.bind("<Button-1>",click)
+b3=Button(root,text="6",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b3.grid(row=2,column=2,ipadx=3,ipady=10,padx=3,pady=3)
+b3.bind("<Button-1>",click)
+
+b1=Button(root,text="1",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b1.grid(row=3,column=0,ipadx=3,ipady=10,padx=3,pady=3)
+b1.bind("<Button-1>",click)
+b2=Button(root,text="2",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b2.grid(row=3,column=1,ipadx=3,ipady=10,padx=3,pady=3)
+b2.bind("<Button-1>",click)
+b3=Button(root,text="3",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b3.grid(row=3,column=2,ipadx=3,ipady=10,padx=3,pady=3)
+b3.bind("<Button-1>",click)
+
+b1=Button(root,text="x",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b1.grid(row=4,column=0,ipadx=3,ipady=10,padx=3,pady=3)
+b1.bind("<Button-1>",click)
+b2=Button(root,text="+",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b2.grid(row=4,column=1,ipadx=3,ipady=10,padx=3,pady=3)
+b2.bind("<Button-1>",click)
+b3=Button(root,text="/",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b3.grid(row=4,column=2,ipadx=3,ipady=10,padx=3,pady=3)
+b3.bind("<Button-1>",click)
+
+b1=Button(root,text="0",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b1.grid(row=5,column=0,ipadx=3,ipady=10,padx=3,pady=3)
+b1.bind("<Button-1>",click)
+b2=Button(root,text="=",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b2.grid(row=5,column=1,ipadx=3,ipady=10,padx=3,pady=3)
+b2.bind("<Button-1>",click)
+b3=Button(root,text="AC",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b3.grid(row=5,column=2,ipadx=3,ipady=10,padx=3,pady=3)
+b3.bind("<Button-1>",click)
+
+b1=Button(root,text="History",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b1.grid(row=6,column=0,ipadx=3,ipady=10,padx=3,pady=3)
+b1.bind("<Button-1>",click)
+b2=Button(root,text=".",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b2.grid(row=6,column=1,ipadx=3,ipady=10,padx=3,pady=3)
+b2.bind("<Button-1>",click)
+b3=Button(root,text="-",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b3.grid(row=6,column=2,ipadx=3,ipady=10,padx=3,pady=3)
+b3.bind("<Button-1>",click)
+
+b1=Button(root,text="sin",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b1.grid(row=7,column=0,ipadx=3,ipady=10,padx=3,pady=3)
+b1.bind("<Button-1>",click)
+b2=Button(root,text="cos",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b2.grid(row=7,column=1,ipadx=3,ipady=10,padx=3,pady=3)
+b2.bind("<Button-1>",click)
+b3=Button(root,text="tan",bd=6,relief="raised",width=5,font="lucida 20 bold")
+b3.grid(row=7,column=2,ipadx=3,ipady=10,padx=3,pady=3)
+b3.bind("<Button-1>",click)
+
+
+
+
+root.mainloop()
